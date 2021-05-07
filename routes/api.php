@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Route;
 }); */
 
 //Route::get('map', [MapController::class],'index');
+Route::resource('addresses', 'MapController',['only'=>['store','edit','update']]);
 Route::resource('countries','CountryController',['only'=>['index','show']]);
 Route::resource('countries.provinces','ProvinceController',['only'=>['index','show']]);
 Route::resource('countries.provinces.departments','DeparmentController',['only'=>['index','show']]);

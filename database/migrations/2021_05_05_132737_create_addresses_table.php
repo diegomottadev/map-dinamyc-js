@@ -22,7 +22,7 @@ class CreateAddressesTable extends Migration
             $table->decimal('longitud',10,8)->nullable();
             $table->decimal('latitud',10,8)->nullable();
             $table->string('street')->nullable();
-            $table->integer('number')->nullable();
+            $table->string('number')->nullable();
             $table->string('dpto')->nullable();
             $table->string('floor')->nullable();
             $table->timestamps();
