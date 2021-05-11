@@ -279,7 +279,6 @@
         }
 
         const address = @json($address);
-        console.log(address);
         const country_id = address.country_id;
         const province_id = address.province_id;
         const department_id = address.department_id;
