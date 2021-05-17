@@ -102,19 +102,44 @@
 <script>
 
     $( document ).ready(function(){
+
+        function removeAll(selectBox) {
+            while (selectBox.options.length > 0) {
+                selectBox.remove(0);
+            }
+        }
+
         $.ajax({
             type: "get",
             url: route('countries.index'),
             success: function(res) {
                 if (res.data) {
-                    $("#province").empty().append('< value="">-- Seleccionar provincia --</option>');
-                    $("#department").empty().append('< value="">-- Seleccionar departamento --</option>');
-                    $("#city").empty().append('< value="">-- Seleccionar ciudad --</option>');
-                    $("#country").append('< value="">-- Seleccionar país --</option>');
-                    $.each(res.data, function(key, value) {
-                        $("#country").append(`<option value="${value.id}">${value.name}</option>`);
+                    elementCountry = document.getElementById('country');
+                    removeAll(elementCountry);
+
+                    elementProvince = document.getElementById('province');
+                    removeAll(elementProvince);
+
+                    elementDepartment = document.getElementById('department');
+                    removeAll(elementDepartment);
+
+                    elementCity = document.getElementById('city');
+                    removeAll(elementCity);
+
+                    var elementOptionCountry = document.createElement("OPTION");
+                    elementOptionCountry.setAttribute("value", "");
+                    var textNodeCountry = document.createTextNode("-- Seleccionar pais --");
+                    elementOptionCountry.appendChild(textNodeCountry);
+                    elementCountry.appendChild(elementOptionCountry);
+
+                    res.data.forEach(function (currentValue, index, array) {
+                        var elementOptionCountry = document.createElement("OPTION");
+                        elementOptionCountry.setAttribute("value", currentValue.id);
+                        var textNodeCountry = document.createTextNode(currentValue.name);
+                        elementOptionCountry.appendChild(textNodeCountry);
+                        elementCountry.appendChild(elementOptionCountry);
                     });
-                    $('#country').val('')
+                    elementCountry.value = "";
                 }
             }
         });
@@ -131,92 +156,132 @@
 
         var coordinates = document.getElementById('coordinates');
 
-        $("#country").select2({
-            placeholder: "-- Seleccionar país --",
-            allowClear: true,
-            language: { noResults: () => "Sin resultados"},
-            theme: 'bootstrap4',
-        });
-        $("#province").select2({
-            placeholder: "-- Seleccionar provincia --",
-            language: { noResults: () => "Sin resultados"},
-            theme: 'bootstrap4',
-            allowClear: true
-        });
-        $("#department").select2({
-            placeholder: "-- Seleccionar departamento --",
-            language: { noResults: () => "Sin resultados"},
-            theme: 'bootstrap4',
-            allowClear: true
-        });
-        $("#city").select2({
-            placeholder: "-- Seleccionar ciudad --",
-            language: { noResults: () => "Sin resultados"},
-            theme: 'bootstrap4',
-            allowClear: true
-        });
+        // $("#country").select2({
+        //     placeholder: "-- Seleccionar país --",
+        //     allowClear: true,
+        //     language: { noResults: () => "Sin resultados"},
+        //     theme: 'bootstrap4',
+        // });
+        // $("#province").select2({
+        //     placeholder: "-- Seleccionar provincia --",
+        //     language: { noResults: () => "Sin resultados"},
+        //     theme: 'bootstrap4',
+        //     allowClear: true
+        // });
+        // $("#department").select2({
+        //     placeholder: "-- Seleccionar departamento --",
+        //     language: { noResults: () => "Sin resultados"},
+        //     theme: 'bootstrap4',
+        //     allowClear: true
+        // });
+        // $("#city").select2({
+        //     placeholder: "-- Seleccionar ciudad --",
+        //     language: { noResults: () => "Sin resultados"},
+        //     theme: 'bootstrap4',
+        //     allowClear: true
+        // });
 
-        $('#country').on('change', function() {
-            console.log($(this).val());
-            const country = $(this).val();
+        document.getElementById("country").addEventListener("change", function (e) {
+            const country = e.target.value;
             $.ajax({
                 type: "get",
                 url: route('countries.provinces.index', [country]),
                 success: function(res) {
-                    $("#province").empty();
-                    $("#department").empty();
-                    $("#city").empty();
-                    $("#province").append('< value="">-- Seleccionar provincia --</option>');
-                    $.each(res.data, function(key, value) {
-                        $("#province").append(`<option value="${value.id}">${value.name}</option>`);
+
+                    elementProvince = document.getElementById('province');
+                    removeAll(elementProvince);
+                    elementDepartment = document.getElementById('department');
+                    removeAll(elementDepartment);
+                    elementCity = document.getElementById('city');
+                    removeAll(elementCity);
+
+                    var elementOptionProvince = document.createElement("OPTION");
+                    elementOptionProvince.setAttribute("value", "");
+                    var textNodeProvince = document.createTextNode("-- Seleccionar provincia --");
+                    elementOptionProvince.appendChild(textNodeProvince);
+                    elementProvince.appendChild(elementOptionProvince);
+
+                    res.data.forEach(function (currentValue, index, array) {
+                        var elementOptionCountry = document.createElement("OPTION");
+                        elementOptionCountry.setAttribute("value", currentValue.id);
+                        var textNodeCountry = document.createTextNode(currentValue.name);
+                        elementOptionCountry.appendChild(textNodeCountry);
+                        elementProvince.appendChild(elementOptionCountry);
                     });
-                    $('#province').val('')
+                    elementProvince.value = "";
                 }
             });
-        });
+        }, false);
 
-        $('#province').change(function() {
-            const province = $(this).val();
-            const country = $('#country').val();
+
+        document.getElementById("province").addEventListener("change", function (e) {
+            const province = e.target.value;
+            var countrySelect = document.getElementById("country");
+            var country = countrySelect.value;
             $.ajax({
                 type: "get",
                 url: route('countries.provinces.departments.index', [country, province]),
                 success: function(res) {
-                    $("#department").empty();
-                    $("#city").empty();
-                    $("#department").append(
-                        '<option value="">-- Seleccionar departamento --</option>');
-                    $.each(res.data, function(key, value) {
-                        $("#department").append(`<option value="${value.id}">${value.name}</option>`);
+
+                    elementDepartment = document.getElementById('department');
+                    removeAll(elementDepartment);
+                    elementCity = document.getElementById('city');
+                    removeAll(elementCity);
+
+                    var elementOptionDepartment = document.createElement("OPTION");
+                    elementOptionDepartment.setAttribute("value", "");
+                    var textNodeDepartment = document.createTextNode("-- Seleccionar departamento --");
+                    elementOptionDepartment.appendChild(textNodeDepartment);
+                    elementDepartment.appendChild(elementOptionDepartment);
+
+                    res.data.forEach(function (currentValue, index, array) {
+                        var elementOptionCountry = document.createElement("OPTION");
+                        elementOptionCountry.setAttribute("value", currentValue.id);
+                        var textNodeCountry = document.createTextNode(currentValue.name);
+                        elementOptionCountry.appendChild(textNodeCountry);
+                        elementDepartment.appendChild(elementOptionCountry);
                     });
-                    $('#department').val('')
+                    elementDepartment.value = "";
                 }
             });
-        });
+        }, false);
 
-        $('#department').change(function() {
-            const department = $(this).val();
-            const province = $('#province').val();
-            const country = $('#country').val();
-            changeMap();
+        document.getElementById("department").addEventListener("change", function (e) {
+            const department = e.target.value;
+            var countrySelect = document.getElementById("country");
+            var country = countrySelect.value;
+            var provinceSelect = document.getElementById("country");
+            var province = provinceSelect.value;
             $.ajax({
                 type: "get",
                 url: route('countries.provinces.departments.cities.index', [country, province, department]),
                 success: function(res) {
-                    $("#city").empty();
-                    $("#city").append('<option value="">-- Seleccionar localidad --</option>');
-                    $.each(res.data, function(key, value) {
-                        $("#city").append(`<option value="${value.id}">${value.name}</option>`);
-                    });
-                    $('#city').val('')
 
+                    elementCity = document.getElementById('city');
+
+                    removeAll(elementCity);
+
+                    var elementOptionDepartment = document.createElement("OPTION");
+                    elementOptionDepartment.setAttribute("value", "");
+                    var textNodeDepartment = document.createTextNode("-- Seleccionar localidad --");
+                    elementOptionDepartment.appendChild(textNodeDepartment);
+                    elementCity.appendChild(elementOptionDepartment);
+
+                    res.data.forEach(function (currentValue, index, array) {
+                        var elementOptionCountry = document.createElement("OPTION");
+                        elementOptionCountry.setAttribute("value", currentValue.id);
+                        var textNodeCountry = document.createTextNode(currentValue.name);
+                        elementOptionCountry.appendChild(textNodeCountry);
+                        elementCity.appendChild(elementOptionCountry);
+                    });
+                    elementCity.value = "";
                 }
             });
-        });
+        }, false);
 
-        $('#city').change(function() {
+        document.getElementById("city").addEventListener("change", function (e) {
             changeMap();
-        });
+        }, false);
 
 
         $('#street').change(function(){
@@ -414,7 +479,7 @@
                                 timer: 1500
                             });
                             $('#error-validation-show').removeClass('d-none');
-                            console.log(err);
+
                             $.each(err.responseJSON.errors, function(key,value) {
                                 $('#error-validation').append(`<li>${value}</li`);
                             });
